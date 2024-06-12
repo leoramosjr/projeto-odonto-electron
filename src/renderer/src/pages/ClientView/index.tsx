@@ -31,7 +31,7 @@ export default function ClientView(): JSX.Element {
         queryKey: ['clients'],
         queryFn: async () => {
             const response = await window.api.fetchClientList();
-            return response;
+            return response.data;
         },
     });
     

@@ -5,6 +5,7 @@ import {
 import Input from '../base/Input'
 import Select from '../base/Select'
 import { useQuery } from '@tanstack/react-query';
+import { ClientsData } from '~/src/shared/types/ipc';
 
 export default function EventModal({
     selectable = false,
@@ -18,9 +19,11 @@ export default function EventModal({
         queryKey: ['clients'],
         queryFn: async () => {
             const response = await window.api.fetchClientList();
-            return response;
+            return response.data;
         },
     });
+
+    console.log("data: ", data)
 
     return (
         <Flex
@@ -34,7 +37,7 @@ export default function EventModal({
             <Select
                 display={selectable ? "flex" : "none"}
                 label="Paciente"
-                optionsList={data?.map(client => client.name) || []}
+                optionsList={data?.map((client: ClientsData) => client.name) || []}
             />
             <Input
                 label="Data"

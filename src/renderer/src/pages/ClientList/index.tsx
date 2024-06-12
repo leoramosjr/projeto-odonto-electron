@@ -18,21 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import Provider from '../index';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-
-interface ClientCardData {
-    id: number,
-    name: string,
-    email: string,
-    birthDate: string,
-    phone: string,
-    address: string,
-    firstQuery: string,
-    lastQuery: string,
-    nextQuery: string,
-    recurrence: string,
-    job: string,
-    origin: string,
-}
+import { ClientsData } from '../../../../shared/types/ipc';
 
 export default function ClientList(): JSX.Element {
 
@@ -46,7 +32,8 @@ export default function ClientList(): JSX.Element {
         queryKey: ['clients'],
         queryFn: async () => {
             const response = await window.api.fetchClientList();
-            return response;
+            
+            return response.data;
         },
     });
 
@@ -125,7 +112,7 @@ export default function ClientList(): JSX.Element {
                     flexWrap="wrap"
                     gap="1rem"
                 >
-                    {filteredData === "" ? data?.map((e: ClientCardData, index: number) => (
+                    {filteredData === "" ? data?.map((e: any, index: number) => (
                         <ClientCard
                             key={index}
                             onCardClick={() => navigate(`/clients/${e.id}`)}
@@ -136,7 +123,7 @@ export default function ClientList(): JSX.Element {
                             email={e.email}
                             phone={e.phone}
                         />
-                    )) : data?.filter((e: ClientCardData) => e.name.toLowerCase().includes(filteredData.toLowerCase()) || e.id.toString().includes(filteredData.toLowerCase())).map((e: ClientCardData, index: number) => (
+                    )) : data?.filter((e: any) => e.name.toLowerCase().includes(filteredData.toLowerCase()) || e.id.toString().includes(filteredData.toLowerCase())).map((e: any, index: number) => (
                         <ClientCard
                             key={index}
                             onCardClick={() => navigate(`/clients/${e.id}`)}

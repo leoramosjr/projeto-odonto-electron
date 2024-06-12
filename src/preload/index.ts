@@ -1,5 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { ElectronAPI, electronAPI } from '@electron-toolkit/preload'
+import { IPC } from '../shared/constants/ipc'
+import { CreateClientResponse, FetchAllClientsResponse, FetchClientResponse } from '../shared/types/ipc'
 
 declare global {
   export interface Window {
@@ -10,28 +12,26 @@ declare global {
 
 // Custom APIs for renderer
 const api = {
-  fetchClientList(): Promise<Array<{
-    id: number,
-    name: string,
-    email: string,
-    birthDate: string,
-    phone: string,
-    address: string,
-    firstQuery: string,
-    lastQuery: string,
-    nextQuery: string,
-    recurrence: string,
-    job: string,
-    origin: string,
-    history: {
-      title: string,
-      description: string,
-      createdAt: string,
-      editedAt: string[],
-    }[]
-  }>> {
-    return ipcRenderer.invoke('fetch-client-list')
+  fetchClientList(): Promise<FetchAllClientsResponse> {
+    return ipcRenderer.invoke(IPC.CLIENTS.FETCH_ALL)
+  },
+
+  fetchClient(id: string): Promise<FetchClientResponse> {
+    return ipcRenderer.invoke(IPC.CLIENTS.FETCH, { id })
+  },
+
+  createClient(): Promise<CreateClientResponse> {
+    return ipcRenderer.invoke(IPC.CLIENTS.CREATE)
+  },
+  
+  editClient(id: string): Promise<void> {
+    return ipcRenderer.invoke(IPC.CLIENTS.SAVE, { id })
+  },
+
+  deleteClient(id: string): Promise<void> {
+    return ipcRenderer.invoke(IPC.CLIENTS.DELETE, { id })
   }
+
 }
 
 if (process.contextIsolated) {
