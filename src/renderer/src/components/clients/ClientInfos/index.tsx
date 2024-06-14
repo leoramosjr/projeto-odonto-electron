@@ -29,8 +29,7 @@ export default function ClientInfos({
     userData: ClientsData, 
 }): JSX.Element {
 
-    const [data, setData] = useState<ClientsData>(userData)
-
+    const [data, setData] = useState<ClientsData>(userData!)
     return (
         <Flex w="100%" gap="2rem">
             <Flex direction="column" w="70%" gap="1rem">
