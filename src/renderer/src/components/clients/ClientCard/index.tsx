@@ -92,18 +92,18 @@ export default function ClientCard({
             >
                 {id && id}
             </Text>
-            {/* <Flex textAlign="center" w="100%" direction="column" align="center" fontSize="0.6rem">
+            <Flex textAlign="center" w="100%" direction="column" align="center" fontSize="0.6rem" hidden={!nextQuery}>
                 <Text>Última Consulta</Text>
                 <Text color="#00A868">
                     {nextQuery && new Intl.DateTimeFormat('pt-BR').format(new Date(nextQuery))}
                 </Text>
             </Flex>
-            <Flex textAlign="center" w="100%" direction="column" align="center" fontSize="0.6rem">
+            <Flex textAlign="center" w="100%" direction="column" align="center" fontSize="0.6rem" hidden={!lastQuery}>
                 <Text>Próxima Consulta</Text>
                 <Text color="#0075EB">
                     {lastQuery && new Intl.DateTimeFormat('pt-BR').format(new Date(lastQuery))}
                 </Text>
-            </Flex> */}
+            </Flex>
             <Flex
                 h="2.5rem"
                 w="8.5rem"
@@ -168,7 +168,7 @@ export default function ClientCard({
                     py="0.75rem"
                     onClick={(e) => {
                         e.stopPropagation()
-                        window.open(`https://wa.me/${phone}`, "_blank")
+                        window.open(`https://wa.me/55${phone.replace(/\D/g, '')}`, "_blank")
                     }}
                 >
                     WhatsApp
