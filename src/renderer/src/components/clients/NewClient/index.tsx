@@ -5,15 +5,44 @@ import {
     Stack,
     Radio,
     RadioGroup,
+    useToast,
 } from "@chakra-ui/react"
 import Input from "../../base/Input";
 import Select from "../../base/Select";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ClientsData, CreateClientRequest } from "~/src/shared/types/ipc";
+import { useEffect, useState } from "react";
+import { cpfMask } from "../../../utils/cpfMask";
+import { phoneMask } from "../../../utils/phoneMask";
 
 export default function NewClient({
     onClose,
 } : {
     onClose: () => void
 }): JSX.Element {
+
+    const [recurrence, setRecurrence] = useState<string>("")
+    const [newClientData, setNewClientData] = useState<ClientsData>()
+    const queryClient = useQueryClient()
+    const toast = useToast()
+    
+    const { isPending: isCreatingDocument, mutateAsync: createNewClient } =
+    useMutation({
+      mutationFn: async () => {
+        console.log("newClientData: ", newClientData)
+        const response = await window.api.createClient(newClientData! as unknown as CreateClientRequest);
+        console.log("response: ", response)
+        return response.data;
+      },
+      onSuccess: (data) => {
+        queryClient.setQueriesData({ queryKey: ["clients"]}, (clients: ClientsData[] | undefined) => {
+          if (clients && clients.length >= 0) {
+            return [...clients, data]
+          }
+          return [data]
+        })
+      },
+    });
 
     return (
         <form
@@ -24,16 +53,45 @@ export default function NewClient({
                 paddingBottom: '1.5rem',
                 alignItems: 'flex-end',
             }}
-            onSubmit={(event) => {
-                event.preventDefault()
+            onSubmit={async (e) => {
+                e.preventDefault()
+                const formData = new FormData(e.currentTarget)
+                const data = Object.fromEntries(formData.entries())
+                const newClient = {
+                    id: "",
+                    cpf: data.cpf.toString(),
+                    name: data.nome.toString(),
+                    email: data.email.toString(),
+                    birthDate: data.birthday.toString(),
+                    phone: data.cellphone.toString(),
+                    address: "",
+                    recurrence: recurrence,
+                    job: data.ocupacao.toString(),
+                    origin: data.origem.toString(),
+                    firstQuery: new Date().toISOString(),
+                    history: [],
+                }
+                setNewClientData(newClient)
+                console.log("newClient: ", newClient)
+                await createNewClient().then(() => {
+                    toast({
+                        title: "Paciente criado com sucesso",
+                        status: "success",
+                        duration: 9000,
+                        isClosable: true,
+                    })
+                    onClose()
+                }).catch((error) => {
+                    toast({
+                        title: "Erro ao criar novo paciente",
+                        description: error.message,
+                        status: "error",
+                        duration: 9000,
+                        isClosable: true,
+                    })
+                })
             }}
         >
-            <Input
-                name="prontuario"
-                label="Número de Prontuário"
-                type="text"
-                placeholder="Prontuário"
-            />
             <Input
                 name="nome"
                 label="Nome Completo"
@@ -50,6 +108,10 @@ export default function NewClient({
                 label="Telefone"
                 type="phone"
                 placeholder="+55 51 98888-8888"
+                onChange={(e) => {
+                    if (e.target.value.length <= 15) e.target.value = phoneMask(e.target.value)
+                    else e.target.value = e.target.value.slice(0, 15)
+                }}
             />
             <Input
                 name="email"
@@ -62,6 +124,10 @@ export default function NewClient({
                 label="CPF"
                 type="cpf"
                 placeholder="000.000.000-00"
+                onChange={(e) => {
+                    if (e.target.value.length <= 14) e.target.value = cpfMask(e.target.value)
+                    else e.target.value = e.target.value.slice(0, 14)
+                }}
             />
             <Input
                 name="ocupacao"
@@ -85,7 +151,11 @@ export default function NewClient({
                     color="#828282"
                     bgColor="white"
                 >Recorrência</Text>
-                <RadioGroup colorScheme="green">
+                <RadioGroup
+                    colorScheme="green"
+                    onChange={setRecurrence}
+                    value={recurrence}
+                >
                     <Stack
                         direction='row'
                         display='flex'
@@ -93,11 +163,11 @@ export default function NewClient({
                         justifyContent='space-between'
                         wrap={'wrap'}
                     >
-                        <Radio value='mensal'>Mensal</Radio>
-                        <Radio value='bimestral'>Bimestral</Radio>
-                        <Radio value='trimestral'>Trimestral</Radio>
-                        <Radio value='semestral'>Semestral</Radio>
-                        <Radio value='anual'>Anual</Radio>
+                        <Radio value='Mensal'>Mensal</Radio>
+                        <Radio value='Bimestral'>Bimestral</Radio>
+                        <Radio value='Trimestral'>Trimestral</Radio>
+                        <Radio value='Semestral'>Semestral</Radio>
+                        <Radio value='Anual'>Anual</Radio>
                     </Stack>
                 </RadioGroup>
             </Flex>
@@ -112,7 +182,6 @@ export default function NewClient({
                 _hover={{
                     bg: '#52c8c2',
                 }}
-                onClick={() => onClose()}
             >
                 Cadastrar
             </Button>

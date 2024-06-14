@@ -58,7 +58,6 @@ export default function PostModal(): JSX.Element {
                     type="file"
                     accept='.png, .jpg, .jpeg, .pdf'
                     onChange={(e) => {
-                        console.log(e.target.files)
                         if (e.target.files && e.target.files[0]?.name) {
                             setFileName(e.target.files[0].name)
                         }

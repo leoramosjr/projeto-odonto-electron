@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { ElectronAPI, electronAPI } from '@electron-toolkit/preload'
 import { IPC } from '../shared/constants/ipc'
-import { CreateClientResponse, FetchAllClientsResponse, FetchClientResponse } from '../shared/types/ipc'
+import { CreateClientRequest, CreateClientResponse, DeleteClientRequest, EditClientRequest, FetchAllClientsResponse, FetchClientRequest, FetchClientResponse } from '../shared/types/ipc'
 
 declare global {
   export interface Window {
@@ -16,20 +16,20 @@ const api = {
     return ipcRenderer.invoke(IPC.CLIENTS.FETCH_ALL)
   },
 
-  fetchClient(id: string): Promise<FetchClientResponse> {
-    return ipcRenderer.invoke(IPC.CLIENTS.FETCH, { id })
+  fetchClient(req: FetchClientRequest): Promise<FetchClientResponse> {
+    return ipcRenderer.invoke(IPC.CLIENTS.FETCH, req)
   },
 
-  createClient(): Promise<CreateClientResponse> {
-    return ipcRenderer.invoke(IPC.CLIENTS.CREATE)
+  createClient(req: CreateClientRequest): Promise<CreateClientResponse> {
+    return ipcRenderer.invoke(IPC.CLIENTS.CREATE, req)
   },
   
-  editClient(id: string): Promise<void> {
-    return ipcRenderer.invoke(IPC.CLIENTS.SAVE, { id })
+  editClient(req: EditClientRequest): Promise<void> {
+    return ipcRenderer.invoke(IPC.CLIENTS.SAVE, req)
   },
 
-  deleteClient(id: string): Promise<void> {
-    return ipcRenderer.invoke(IPC.CLIENTS.DELETE, { id })
+  deleteClient(req: DeleteClientRequest): Promise<void> {
+    return ipcRenderer.invoke(IPC.CLIENTS.DELETE, req)
   }
 
 }

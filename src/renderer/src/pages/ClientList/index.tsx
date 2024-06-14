@@ -37,6 +37,8 @@ export default function ClientList(): JSX.Element {
         },
     });
 
+    console.log("data: ", data)
+
     return (
         <Provider>
             <Flex
@@ -45,7 +47,7 @@ export default function ClientList(): JSX.Element {
                 direction="column"
                 gap="2rem"
             >
-                <Modal isOpen={isOpen} onClose={onClose}>
+                <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
                     <ModalOverlay />
                     <ModalContent>
                         <ModalHeader fontWeight={"bold"} fontSize={"1.5rem"}>Novo Paciente</ModalHeader>
@@ -116,6 +118,7 @@ export default function ClientList(): JSX.Element {
                         <ClientCard
                             key={index}
                             onCardClick={() => navigate(`/clients/${e.id}`)}
+                            id={e.id}
                             name={e.name}
                             lastQuery={e.lastQuery}
                             nextQuery={e.nextQuery}
@@ -127,6 +130,7 @@ export default function ClientList(): JSX.Element {
                         <ClientCard
                             key={index}
                             onCardClick={() => navigate(`/clients/${e.id}`)}
+                            id={e.id}
                             name={e.name}
                             lastQuery={e.lastQuery}
                             nextQuery={e.nextQuery}

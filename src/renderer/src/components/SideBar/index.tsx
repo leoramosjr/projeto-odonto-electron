@@ -6,30 +6,30 @@ import {
 import {
     FiHelpCircle,
     FiLogOut,
-    FiCheckSquare,
+    // FiCheckSquare,
     FiUsers,
-    FiCalendar
+    // FiCalendar
 } from "react-icons/fi";
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function Sidebar(): JSX.Element {
 
     const navButtons = [
-        {
-            icon: <FiCalendar />,
-            label: "Calendário",
-            route: "/"
-        },
+        // {
+        //     icon: <FiCalendar />,
+        //     label: "Calendário",
+        //     route: "/"
+        // },
         {
             icon: <FiUsers />,
             label: "Pacientes",
-            route: "/clients"
+            route: "/"
         },
-        {
-            icon: <FiCheckSquare />,
-            label: "Tarefas",
-            route: "/tasks"
-        },
+        // {
+        //     icon: <FiCheckSquare />,
+        //     label: "Tarefas",
+        //     route: "/tasks"
+        // },
     ]
 
     const navigate = useNavigate();
@@ -153,7 +153,8 @@ export default function Sidebar(): JSX.Element {
                             background: "#066964",
                         }}
                         onClick={() => {
-                            window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley', '_self')
+                            window.open('https://www.youtube.com/watch?v=u8Tegm_boN8&ab_channel=UnknownUser', '_blank')
+                            window.close()
                         }}
                     >
                         <FiLogOut />

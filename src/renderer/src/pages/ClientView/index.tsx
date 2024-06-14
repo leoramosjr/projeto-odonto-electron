@@ -27,22 +27,22 @@ import { useState } from 'react';
 
 export default function ClientView(): JSX.Element {
 
+    const userId = useParams()
+
     const { data } = useQuery({
-        queryKey: ['clients'],
+        queryKey: ['clients', userId.id],
         queryFn: async () => {
-            const response = await window.api.fetchClientList();
+            const response = await window.api.fetchClient({id: userId.id!});
             return response.data;
         },
     });
-    
-    const userId = useParams()
-    const userData = data?.find((item) => item.id.toString() === userId.id)
+
     const { isOpen: isOpen, onOpen: onOpen, onClose: onClose } = useDisclosure();
     const { isOpen: isOpen2, onOpen: onOpen2, onClose: onClose2} = useDisclosure();
     const { isOpen: isOpen3, onOpen: onOpen3, onClose: onClose3} = useDisclosure();
     const [isEditing, setIsEditing] = useState(false)
     
-    document.title = `${userData?.name} | • NR •`
+    document.title = `${data?.name} | • NR •`
 
     return (
         <Provider>
@@ -52,7 +52,7 @@ export default function ClientView(): JSX.Element {
                     <ModalHeader fontWeight={"bold"} fontSize={"1.5rem"}>Nova Postagem</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        {userData && <PostModal />}
+                        {data && <PostModal />}
                     </ModalBody>
                 </ModalContent>
             </Modal>
@@ -62,7 +62,7 @@ export default function ClientView(): JSX.Element {
                     <ModalHeader fontWeight={"bold"} fontSize={"1.5rem"}>Novo Evento</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        {userData && <EventModal />}
+                        {data && <EventModal />}
                     </ModalBody>
                 </ModalContent>
             </Modal>
@@ -72,7 +72,7 @@ export default function ClientView(): JSX.Element {
                     <ModalHeader fontWeight={"bold"} fontSize={"1.5rem"}>Nova Postagem</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        {userData && <PostModal />}
+                        {data && <PostModal />}
                     </ModalBody>
                 </ModalContent>
             </Modal>
@@ -93,8 +93,8 @@ export default function ClientView(): JSX.Element {
                 >
                     <Flex align="center" gap="1.5rem">
                         <Flex
-                            w="5.75rem"
-                            h="5.75rem"
+                            w="5.75rem !important"
+                            h="5.75rem !important"
                             bg="#066964"
                             borderRadius="50%"
                             justify="center"
@@ -109,14 +109,16 @@ export default function ClientView(): JSX.Element {
                                 lineHeight="1.6rem"
                                 textAlign="center"
                             >
-                                {userData && userData?.name[0] + userData?.name.split(" ")[1][0]}
+                                {data && data?.name[0] + data?.name.split(" ")[1][0]}
                             </Text>
                         </Flex>
                         <Text
                             fontSize="1.5rem"
                             fontWeight="700"
+                            flexWrap="wrap"
+                            wordBreak="break-word"
                         >
-                            {userData?.name} | {userData?.id}
+                            {data?.name} | {data?.id}
                         </Text>
                         <Flex>
                             <FiEdit
@@ -179,7 +181,7 @@ export default function ClientView(): JSX.Element {
                     gap="1.5rem"
                     direction="column"
                 >
-                    <ClientInfos isEditing={isEditing} userData={userData ?? {}} />
+                    <ClientInfos isEditing={isEditing} userData={data!} />
                     <Text
                         fontSize="1.5rem"
                         fontWeight="700"
@@ -200,7 +202,7 @@ export default function ClientView(): JSX.Element {
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                {userData?.history.map((item, index: number) => (
+                                {data?.history?.map((item, index: number) => (
                                     <Tr
                                         px="1rem"
                                         key={index}

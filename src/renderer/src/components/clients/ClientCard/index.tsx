@@ -10,6 +10,7 @@ import { FiMail } from "react-icons/fi";
 
 export default function ClientCard({
     onCardClick,
+    id,
     name,
     lastQuery,
     nextQuery,
@@ -18,6 +19,7 @@ export default function ClientCard({
     phone,
 } : {
     onCardClick: () => void,
+    id: string,
     name: string,
     lastQuery: string,
     nextQuery: string,
@@ -30,6 +32,7 @@ export default function ClientCard({
 
     return (
         <Flex
+            display={id === "000000" ? "none" : "flex"}
             w="100%"
             maxW="13rem"
             h="18rem"
@@ -55,6 +58,7 @@ export default function ClientCard({
                 borderRadius="50%"
                 justify="center"
                 align="center"
+                direction="column"
             >
                 <Text
                     fontSize="1rem"
@@ -65,7 +69,7 @@ export default function ClientCard({
                     lineHeight="1.6rem"
                     textAlign="center"
                 >
-                    {name[0] + name.split(" ")[1][0]}
+                    {name && name[0] + name.split(" ")[1][0]}
                 </Text>
             </Flex>
             <Text
@@ -77,20 +81,29 @@ export default function ClientCard({
                 lineHeight="1.6rem"
                 textAlign="center"
             >
-                {name}
+                {name && name}
             </Text>
-            <Flex textAlign="center" w="100%" direction="column" align="center" fontSize="0.6rem">
+            <Text
+                fontSize="0.75rem"
+                fontWeight="400"
+                fontFamily="Dm Sans"
+                color="#333333"
+                textAlign="center"
+            >
+                {id && id}
+            </Text>
+            {/* <Flex textAlign="center" w="100%" direction="column" align="center" fontSize="0.6rem">
                 <Text>Última Consulta</Text>
                 <Text color="#00A868">
-                    {new Intl.DateTimeFormat('pt-BR').format(new Date(nextQuery))}
+                    {nextQuery && new Intl.DateTimeFormat('pt-BR').format(new Date(nextQuery))}
                 </Text>
             </Flex>
             <Flex textAlign="center" w="100%" direction="column" align="center" fontSize="0.6rem">
                 <Text>Próxima Consulta</Text>
                 <Text color="#0075EB">
-                    {new Intl.DateTimeFormat('pt-BR').format(new Date(lastQuery))}
+                    {lastQuery && new Intl.DateTimeFormat('pt-BR').format(new Date(lastQuery))}
                 </Text>
-            </Flex>
+            </Flex> */}
             <Flex
                 h="2.5rem"
                 w="8.5rem"
@@ -114,7 +127,7 @@ export default function ClientCard({
                         letterSpacing="0.00644rem"
                         lineHeight="1rem"
                     >
-                        {recurrence.charAt(0).toUpperCase() + recurrence.slice(1)}
+                        {recurrence && recurrence.charAt(0).toUpperCase() + recurrence.slice(1)}
                     </Text>
                 </Flex>
             </Flex>

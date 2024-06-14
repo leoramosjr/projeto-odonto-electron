@@ -7,8 +7,6 @@ export interface ClientsData {
     phone: string,
     address: string,
     firstQuery: string,
-    lastQuery: string,
-    nextQuery: string,
     recurrence: string,
     job: string,
     origin: string,
@@ -40,6 +38,10 @@ export interface FetchAllClientsResponse {
 }
 
 export interface FetchClientResponse {
+    data: ClientsData
+}
+
+export interface CreateClientRequest {
     data: ClientsData
 }
 

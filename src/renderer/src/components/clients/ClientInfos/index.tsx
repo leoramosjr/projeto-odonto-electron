@@ -10,6 +10,9 @@ import {
 import Input from '../../base/Input';
 import Select from '../../base/Select';
 import { useState } from 'react';
+import { ClientsData } from '~/src/shared/types/ipc';
+import { cpfMask } from '../../../utils/cpfMask';
+import { phoneMask } from '../../../utils/phoneMask';
 
 interface IHistory {
     title: string,
@@ -18,30 +21,15 @@ interface IHistory {
     editedAt: string[],
 }
 
-interface IUserData {
-    name: string,
-    id: number,
-    email: string,
-    phone: string,
-    birthDate: string,
-    cpf: string,
-    job: string,
-    origin: string,
-    firstQuery: string,
-    recurrence: string,
-    history?: IHistory[],
-}
-
 export default function ClientInfos({
     isEditing,
     userData,
 } : {
     isEditing: boolean,
-    userData: IUserData | unknown, 
+    userData: ClientsData, 
 }): JSX.Element {
 
-    const [data, setData] = useState<IUserData>(userData as IUserData)
-    const history = (userData as IUserData).history || [];
+    const [data, setData] = useState<ClientsData>(userData)
 
     return (
         <Flex w="100%" gap="2rem">
@@ -61,7 +49,7 @@ export default function ClientInfos({
                         bold
                         label="Data de Nascimento"
                         placeholder="04/10/1998"
-                        value={Intl.DateTimeFormat('pt-BR').format(new Date(data.birthDate))}
+                        value={data?.birthDate}
                         onChange={(e) => {
                             setData({
                                 ...data,
@@ -74,12 +62,13 @@ export default function ClientInfos({
                         bold
                         label="Telefone"
                         placeholder="+55 51 993043856"
-                        value={data.phone}
+                        value={data?.phone}
                         onChange={(e) => {
-                            setData({
+                            if (e.target.value.length <= 15) setData({
                                 ...data,
-                                phone: e.target.value,
+                                phone: phoneMask(e.target.value),
                             });
+                            else e.target.value = e.target.value.slice(0, 15)
                         }}
                     />
                 </Flex>
@@ -89,7 +78,7 @@ export default function ClientInfos({
                         bold
                         label="Endereço de Email"
                         placeholder="victor.mondin@gmail.com"
-                        value={data.email}
+                        value={data?.email}
                         onChange={(e) => {
                             setData({
                                 ...data,
@@ -102,12 +91,13 @@ export default function ClientInfos({
                         bold
                         label="CPF"
                         placeholder="000.000.000-00"
-                        value={data.cpf}
+                        value={data?.cpf}
                         onChange={(e) => {
-                            setData({
+                            if (e.target.value.length <= 14) setData({
                                 ...data,
-                                cpf: e.target.value,
+                                cpf: cpfMask(e.target.value),
                             });
+                            else e.target.value = e.target.value.slice(0, 14)
                         }}
                     />
                 </Flex>
@@ -117,7 +107,7 @@ export default function ClientInfos({
                         bold
                         label="Ocupação"
                         placeholder="Engenheiro de beleza"
-                        value={data.job}
+                        value={data?.job}
                         onChange={(e) => {
                             setData({
                                 ...data,
@@ -129,7 +119,7 @@ export default function ClientInfos({
                         isEditing={isEditing}
                         bold
                         label="Origem"
-                        value={data.origin}
+                        value={data?.origin}
                         onChange={(e) => {
                             setData({
                                 ...data,
@@ -150,7 +140,7 @@ export default function ClientInfos({
                         bold
                         label="Primeira Consulta"
                         placeholder="23/09/2023"
-                        value={new Intl.DateTimeFormat('pt-BR').format(new Date(data.firstQuery))}
+                        value={data?.firstQuery}
                         onChange={(e) => {
                             setData({
                                 ...data,
@@ -162,7 +152,7 @@ export default function ClientInfos({
                         isEditing={isEditing}
                         bold
                         label="Recorrência"
-                        value={data.recurrence}
+                        value={data?.recurrence}
                         onChange={(e) => {
                             setData({
                                 ...data,
@@ -197,7 +187,7 @@ export default function ClientInfos({
                 >
                     <Table size="sm">
                         <Tbody width="100%">
-                            {history.map((item, index) => {
+                            {/* {userData?.history.map((item, index) => {
                                 return (
                                     <Tr
                                         display="flex"
@@ -234,7 +224,7 @@ export default function ClientInfos({
                                         </Td>
                                     </Tr>
                                 );
-                            })}
+                            })} */}
                         </Tbody>
                     </Table>
                 </TableContainer>
