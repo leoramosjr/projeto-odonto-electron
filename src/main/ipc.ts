@@ -19,9 +19,14 @@ ipcMain.handle(IPC.CLIENTS.FETCH, async (_, { id }: FetchClientRequest): Promise
 
 ipcMain.handle(IPC.CLIENTS.CREATE, async (_, newClient: ClientsData): Promise<CreateClientResponse> => {
         const clientsLength = Object.keys(store.get('clients')).length
-        const lastId =  new Array(+6 + 1 - (clientsLength + '').length).join('0') + (clientsLength + 1);
+        let lastId =  new Array(+6 + 1 - (clientsLength + '').length).join('0') + (clientsLength + 1);
 
         console.log("newClient: ", newClient)
+
+        if (lastId.length > 6) {
+            const newArray = lastId.slice(lastId.length - 6, lastId.length)
+            lastId = newArray
+        }
 
         const client: ClientsData = {
             id: lastId,

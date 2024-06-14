@@ -69,7 +69,7 @@ export default function ClientCard({
                     lineHeight="1.6rem"
                     textAlign="center"
                 >
-                    {name && name[0] + name.split(" ")[1][0]}
+                    {name && name.includes(" ") ? name[0] + name.split(" ")[1][0] : name[0]}
                 </Text>
             </Flex>
             <Text
@@ -146,6 +146,15 @@ export default function ClientCard({
                     py="0.75rem"
                     onClick={(e) => {
                         e.stopPropagation()
+                        if (!email) {
+                            toast({
+                                title: "Email não cadastrado!",
+                                status: "error",
+                                duration: 2000,
+                                isClosable: true,
+                            })
+                            return
+                        }
                         navigator.clipboard.writeText(email)
                         toast({
                             title: "Email copiado!",
@@ -168,6 +177,15 @@ export default function ClientCard({
                     py="0.75rem"
                     onClick={(e) => {
                         e.stopPropagation()
+                        if (!phone) {
+                            toast({
+                                title: "Telefone não cadastrado!",
+                                status: "error",
+                                duration: 2000,
+                                isClosable: true,
+                            })
+                            return
+                        }
                         window.open(`https://wa.me/55${phone.replace(/\D/g, '')}`, "_blank")
                     }}
                 >

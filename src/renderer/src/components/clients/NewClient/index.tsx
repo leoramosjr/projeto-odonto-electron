@@ -72,7 +72,28 @@ export default function NewClient({
                     history: [],
                 }
                 setNewClientData(newClient)
-                console.log("newClient: ", newClient)
+                
+                if(!newClient.name) return toast({
+                    title: "Nome é obrigatório",
+                    status: "error",
+                    duration: 9000,
+                    isClosable: true,
+                })
+
+                if(!newClient.cpf) return toast({
+                    title: "CPF é obrigatório",
+                    status: "error",
+                    duration: 9000,
+                    isClosable: true,
+                })
+
+                if(!newClient.birthDate) return toast({
+                    title: "Data de nascimento é obrigatório",
+                    status: "error",
+                    duration: 9000,
+                    isClosable: true,
+                })
+
                 await createNewClient().then(() => {
                     toast({
                         title: "Paciente criado com sucesso",
