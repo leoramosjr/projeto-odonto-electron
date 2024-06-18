@@ -105,6 +105,7 @@ export default function ClientCard({
                 </Text>
             </Flex>
             <Flex
+                hidden={!recurrence}
                 h="2.5rem"
                 w="8.5rem"
                 justify="center"

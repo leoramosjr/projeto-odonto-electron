@@ -25,6 +25,14 @@ import EventModal from '../../components/EventModal';
 import ClientInfos from '../../components/clients/ClientInfos';
 import { useState } from 'react';
 
+interface IHistory {
+    title: string,
+    description: string,
+    createdAt: string,
+    image?: string,
+    editedAt: string[],
+}
+
 export default function ClientView(): JSX.Element {
 
     const userId = useParams()
@@ -41,6 +49,7 @@ export default function ClientView(): JSX.Element {
     const { isOpen: isOpen2, onOpen: onOpen2, onClose: onClose2} = useDisclosure();
     const { isOpen: isOpen3, onOpen: onOpen3, onClose: onClose3} = useDisclosure();
     const [isEditing, setIsEditing] = useState(false)
+    const [activePost, setActivePost] = useState<IHistory | null>(null)
     
     document.title = `${data?.name} | • NR •`
 
@@ -52,7 +61,16 @@ export default function ClientView(): JSX.Element {
                     <ModalHeader fontWeight={"bold"} fontSize={"1.5rem"}>Nova Postagem</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        {data && <PostModal />}
+                        {data && <PostModal
+                            data={
+                                {
+                                    title: "",
+                                    description: "",
+                                    createdAt: "",
+                                    editedAt: [],
+                                }
+                            }
+                        />}
                     </ModalBody>
                 </ModalContent>
             </Modal>
@@ -69,10 +87,10 @@ export default function ClientView(): JSX.Element {
             <Modal isOpen={isOpen3} onClose={onClose3}>
                 <ModalOverlay />
                 <ModalContent minW="57.5rem">
-                    <ModalHeader fontWeight={"bold"} fontSize={"1.5rem"}>Nova Postagem</ModalHeader>
+                    <ModalHeader fontWeight={"bold"} fontSize={"1.5rem"}>{activePost?.title}</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        {data && <PostModal />}
+                        {data && <PostModal data={activePost!} editable />}
                     </ModalBody>
                 </ModalContent>
             </Modal>
@@ -109,7 +127,7 @@ export default function ClientView(): JSX.Element {
                                 lineHeight="1.6rem"
                                 textAlign="center"
                             >
-                                {data && data?.name[0] + data?.name.split(" ")[1][0]}
+                                {data?.name && data.name.includes(" ") ? data.name[0] + data.name.split(" ")[1][0] : data?.name[0]}
                             </Text>
                         </Flex>
                         <Text
@@ -190,11 +208,20 @@ export default function ClientView(): JSX.Element {
                     >
                         Postagens
                     </Text>
-                    <TableContainer w="100%">
+                    <Text
+                        hidden={data?.history.length !== 0}
+                        fontSize="1rem"
+                        fontWeight="500"
+                        fontFamily="Dm Sans"
+                        color="#1A202C"
+                    >
+                        Nenhuma postagem encontrada
+                    </Text>
+                    <TableContainer w="100%" hidden={data?.history.length === 0}>
                         <Table>
                             <Thead>
                                 <Tr w="100%" display="flex" justifyContent={"space-between"} px="1rem">
-                                    <Td px="0" fontWeight="bold">Conteúdo</Td>
+                                    <Td px="0" fontWeight="bold">Postagem</Td>
                                     <Flex w="30%" justify="space-between">
                                         <Td px="0" fontWeight="bold">Data de Criação</Td>
                                         <Td px="0" fontWeight="bold">Última Edição</Td>
@@ -202,14 +229,23 @@ export default function ClientView(): JSX.Element {
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                {data?.history?.map((item, index: number) => (
+                                {data?.history?.filter((item: IHistory) => {
+                                    const today = new Date();
+                                    const dateToFormat = new Date(item.createdAt.split('/').reverse().join('-')).setDate(new Date(item.createdAt.split('/').reverse().join('-')).getDate() + 1);
+                                    if (dateToFormat > today.getTime()) {
+                                        return null;
+                                    } else return item;
+                                }).map((item, index: number) => (
                                     <Tr
                                         px="1rem"
                                         key={index}
                                         w="100%"
                                         display="flex"
                                         justifyContent={"space-between"}
-                                        onClick={onOpen3}
+                                        onClick={() => {
+                                            setActivePost(item)
+                                            onOpen3()
+                                        }}
                                         cursor="pointer"
                                         _hover={{
                                             backgroundColor: '#F5F5F5'

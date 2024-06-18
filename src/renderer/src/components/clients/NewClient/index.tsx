@@ -70,6 +70,7 @@ export default function NewClient({
                     origin: data.origem.toString(),
                     firstQuery: new Date().toISOString(),
                     history: [],
+                    nextEvents: [],
                 }
                 setNewClientData(newClient)
                 
@@ -79,16 +80,14 @@ export default function NewClient({
                     duration: 9000,
                     isClosable: true,
                 })
-
-                if(!newClient.cpf) return toast({
-                    title: "CPF é obrigatório",
+                if(!newClient.birthDate) return toast({
+                    title: "Data de nascimento é obrigatório",
                     status: "error",
                     duration: 9000,
                     isClosable: true,
                 })
-
-                if(!newClient.birthDate) return toast({
-                    title: "Data de nascimento é obrigatório",
+                if(!newClient.cpf) return toast({
+                    title: "CPF é obrigatório",
                     status: "error",
                     duration: 9000,
                     isClosable: true,

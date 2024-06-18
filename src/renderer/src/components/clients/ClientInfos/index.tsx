@@ -18,6 +18,7 @@ interface IHistory {
     title: string,
     description: string,
     createdAt: string,
+    image?: string,
     editedAt: string[],
 }
 
@@ -114,6 +115,21 @@ export default function ClientInfos({
                             });
                         }}
                     />
+                    <Input
+                        isEditing={isEditing}
+                        bold
+                        label="Endereço"
+                        placeholder="Travbessa Tia Carmem, 123"
+                        value={data?.address}
+                        onChange={(e) => {
+                            setData({
+                                ...data,
+                                address: e.target.value,
+                            });
+                        }}
+                    />
+                </Flex>
+                <Flex w="100%" gap="2rem">
                     <Select
                         isEditing={isEditing}
                         bold
@@ -132,8 +148,6 @@ export default function ClientInfos({
                             "Outros",
                         ]}
                     />
-                </Flex>
-                <Flex w="100%" gap="2rem">
                     <Input
                         isEditing={isEditing}
                         bold
@@ -147,6 +161,8 @@ export default function ClientInfos({
                             });
                         }}
                     />
+                </Flex>
+                <Flex w="calc(50% - 1rem)">
                     <Select
                         isEditing={isEditing}
                         bold
@@ -179,14 +195,30 @@ export default function ClientInfos({
                 >
                     Controle de Retornos
                 </Text>
+                <Text
+                    hidden={userData?.history?.length !== 0}
+                    fontSize="1rem"
+                    fontWeight="500"
+                    fontFamily="Dm Sans"
+                    color="#1A202C"
+                >
+                    Nenhum retorno agendado
+                </Text>
                 <TableContainer
+                    hidden={!userData?.history}
                     w="100%"
                     overflowY="auto"
                     h="100%"
                 >
                     <Table size="sm">
                         <Tbody width="100%">
-                            {/* {userData?.history.map((item, index) => {
+                            {userData?.history.filter((item: IHistory) => {
+                                const today = new Date();
+                                const dateToFormat = new Date(item.createdAt.split('/').reverse().join('-')).setDate(new Date(item.createdAt.split('/').reverse().join('-')).getDate() + 1);
+                                if (dateToFormat < today.getTime()) {
+                                    return null;
+                                } else return item;
+                                }).map((item, index) => {
                                 return (
                                     <Tr
                                         display="flex"
@@ -223,7 +255,7 @@ export default function ClientInfos({
                                         </Td>
                                     </Tr>
                                 );
-                            })} */}
+                            })}
                         </Tbody>
                     </Table>
                 </TableContainer>

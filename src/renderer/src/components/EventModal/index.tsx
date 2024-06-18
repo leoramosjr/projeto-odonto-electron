@@ -9,7 +9,7 @@ import { ClientsData } from '~/src/shared/types/ipc';
 
 export default function EventModal({
     selectable = false,
-    date,
+    date = '',
 } : {
     selectable?: boolean
     date?: string
@@ -22,8 +22,6 @@ export default function EventModal({
             return response.data;
         },
     });
-
-    console.log("data: ", data)
 
     return (
         <Flex

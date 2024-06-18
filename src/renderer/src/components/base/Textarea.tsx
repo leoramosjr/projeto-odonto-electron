@@ -1,27 +1,27 @@
 import {
     Flex,
     Text,
-    Input as ChakraInput,
+    Textarea as ChakraTextarea,
     InputGroup,
-    InputProps as ChakraInputProps,
+    TextareaProps as ChakraTextareaProps,
 } from '@chakra-ui/react'
 import { useState } from 'react'
 
-interface InputProps extends ChakraInputProps {
+interface TextareaProps extends ChakraTextareaProps {
     display?: string,
     name?: string,
     label?: string,
     type?: string,
     placeholder?: string,
     value?: string,
-    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void,
+    onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void,
     leftChildren?: React.ReactNode,
     rightChildren?: React.ReactNode,
     bold?: boolean,
     isEditing?: boolean,
 }
 
-export default function Input({
+export default function Textarea({
         display = "flex",
         name,
         label,
@@ -34,7 +34,7 @@ export default function Input({
         isEditing = true,
         bold,
         ...props
-    } : InputProps): JSX.Element {
+    } : TextareaProps): JSX.Element {
 
     const [isFocused, setIsFocused] = useState(false)
     
@@ -42,7 +42,7 @@ export default function Input({
         <Flex
             w="100%"
             direction="column"
-            display={display}
+            display={display ? "flex" : "none"}
         >
             <Text
                 fontSize="0.75rem"
@@ -60,7 +60,7 @@ export default function Input({
             </Text>
             <InputGroup>
                 {leftChildren}
-                <ChakraInput
+                <ChakraTextarea
                     disabled={!isEditing}
                     name={name}
                     type={type}

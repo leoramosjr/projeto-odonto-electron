@@ -13,9 +13,17 @@ export interface ClientsData {
     history: {
       title: string,
       description: string,
+      image?: string,
       createdAt: string,
+      startTime: string,
       editedAt: string[],
-    }[]
+    }[],
+    nextEvents: {
+        title: string,
+        date: string,
+        startTime: string,
+        endTime: string,
+    }[],
 }
 
 //REquests

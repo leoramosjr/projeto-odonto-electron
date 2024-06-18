@@ -1,16 +1,27 @@
 import {
     Flex,
-    Textarea,
-    Input,
+    Input as ChakraInput,
     Button,
     Text,
 } from '@chakra-ui/react'
 import { useState } from 'react'
+import { FiEdit, FiCheckSquare } from 'react-icons/fi';
+import Input from '../../base/Input';
+import Textarea from '../../base/Textarea';
 
-export default function PostModal(): JSX.Element {
+interface IHistory {
+    title: string,
+    description: string,
+    createdAt: string,
+    image?: string,
+    editedAt: string[],
+}
+
+export default function PostModal({data, editable = false} : {data: IHistory, editable?: boolean}): JSX.Element {
 
     const [fileName, setFileName] = useState('')
-
+    const [isEditing, setIsEditing] = useState(false)
+    
     return (
         <Flex
             w="fit-content"
@@ -26,18 +37,54 @@ export default function PostModal(): JSX.Element {
         >
             <Flex
                 w="100%"
-                justify="flex-start"
-                fontSize={"1.25rem"}
-                fontWeight={"500"}
+                align="center"
+                justify="space-between"
             >
-                Descrição
+                <Input
+                    isEditing={editable ? isEditing : true}
+                    label="Criado em"
+                    w="11rem"
+                    value={data?.createdAt.split('/').reverse().join('-')}
+                    type="date"
+                />
+                <Flex h="fit-content" align="center" hidden={!editable} gap="2rem">
+                    <Input
+                        display={data.editedAt.length === 0 ? 'none' : 'block'}
+                        isEditing={false}
+                        label="Última alteração"
+                        w="10rem"
+                        type="date"
+                        value={data.editedAt[data.editedAt.length - 1]?.split('/').reverse().join('-')}
+                    />
+                    <FiEdit
+                        size="1.5rem"
+                        color="#B5B5B5"
+                        style={{
+                            cursor: 'pointer',
+                            display: isEditing ? 'none' : 'block'
+                        }}
+                        onClick={() => setIsEditing(true)}
+                    />
+                    <FiCheckSquare
+                        size="1.5rem"
+                        color="#B5B5B5"
+                        style={{
+                            cursor: 'pointer',
+                            display: isEditing ? 'block' : 'none'
+                        }}
+                        onClick={() => setIsEditing(false)}
+                    />
+                </Flex>
             </Flex>
             <Textarea
+                isEditing={editable ? isEditing : true}
+                label="Descrição"
                 w="100%"
                 minH="10rem"
                 maxH="20rem"
                 placeholder="Descreva o que aconteceu"
                 resize="none"
+                value={data.description}
             />
             <Flex
                 w="100%"
@@ -45,55 +92,65 @@ export default function PostModal(): JSX.Element {
                 gap="1rem"
                 align="center"
             >
-                <Text
+                <Flex
+                    gap="1rem"
                     align="center"
-                    fontSize="0.875rem"
-                    color="#C6C6C6"
+                    hidden={editable && !isEditing && !data.image}
                 >
-                    {fileName}
-                </Text>
-                <Input
-                    display="none"
-                    id="file"
-                    type="file"
-                    accept='.png, .jpg, .jpeg, .pdf'
-                    onChange={(e) => {
-                        if (e.target.files && e.target.files[0]?.name) {
-                            setFileName(e.target.files[0].name)
-                        }
-                    }}
-                />
-                <Button
-                    as="label"
-                    htmlFor="file"
-                    cursor="pointer"
-                    bg="#43A29D"
-                    color="white"
-                    fontWeight="bold"
-                    fontSize="0.875rem"
-                    lineHeight="1.25rem"
-                    transition="all 0.1s ease-in-out"
-                    px="1.5rem"
-                    _hover={{
-                        bg: '#52c8c2',
-                    }}
-                >
-                    <label htmlFor="file" style={{cursor: "pointer",}}>Adicionar Imagem</label>
-                </Button>
-                <Button
-                    bg="#054945"
-                    color="white"
-                    fontWeight="bold"
-                    fontSize="0.875rem"
-                    lineHeight="1.25rem"
-                    transition="all 0.1s ease-in-out"
-                    px="1.5rem"
-                    _hover={{
-                        bg: '#52c8c2',
-                    }}
-                >
-                    Publicar
-                </Button>
+                    <Text
+                        align="center"
+                        fontSize="0.875rem"
+                        color="#C6C6C6"
+                    >
+                        {fileName}
+                    </Text>
+                    <ChakraInput
+                        isDisabled={editable ? isEditing : true}
+                        display="none"
+                        id="file"
+                        type="file"
+                        accept='.png, .jpg, .jpeg, .pdf'
+                        onChange={(e) => {
+                            if (e.target.files && e.target.files[0]?.name) {
+                                setFileName(e.target.files[0].name)
+                            }
+                        }}
+                    />
+                    <Button
+                        as="label"
+                        htmlFor="file"
+                        cursor="pointer"
+                        bg="#43A29D"
+                        color="white"
+                        fontWeight="bold"
+                        fontSize="0.875rem"
+                        lineHeight="1.25rem"
+                        transition="all 0.1s ease-in-out"
+                        px="1.5rem"
+                        _hover={{
+                            bg: '#52c8c2',
+                        }}
+                    >
+                        <label htmlFor="file" style={{cursor: "pointer",}}>
+                            {editable ? isEditing ? !data.image ? "Adicionar imagem" : "Alterar imagem" : "Ver imagem" : "Adicionar imagem"}
+                        </label>
+                    </Button>
+                    <Button
+                        hidden={editable}
+                        bg="#054945"
+                        color="white"
+                        fontWeight="bold"
+                        fontSize="0.875rem"
+                        lineHeight="1.25rem"
+                        transition="all 0.1s ease-in-out"
+                        px="1.5rem"
+                        _hover={{
+                            bg: '#52c8c2',
+                        }}
+                    >
+                        Publicar
+                    </Button>
+                </Flex>
             </Flex>
         </Flex>
     )
