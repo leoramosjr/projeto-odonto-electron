@@ -14,6 +14,7 @@ interface IHistory {
     description: string,
     createdAt: string,
     image?: string,
+    startTime: string,
     editedAt: string[],
 }
 
@@ -21,7 +22,7 @@ export default function PostModal({data, editable = false} : {data: IHistory, ed
 
     const [fileName, setFileName] = useState('')
     const [isEditing, setIsEditing] = useState(false)
-    
+
     return (
         <Flex
             w="fit-content"
@@ -40,13 +41,26 @@ export default function PostModal({data, editable = false} : {data: IHistory, ed
                 align="center"
                 justify="space-between"
             >
-                <Input
-                    isEditing={editable ? isEditing : true}
-                    label="Criado em"
-                    w="11rem"
-                    value={data?.createdAt.split('/').reverse().join('-')}
-                    type="date"
-                />
+                <Flex
+                    w="fit-content"
+                    gap="1rem"
+                >
+                    <Input
+                        isEditing={editable ? isEditing : true}
+                        label="Criado em"
+                        w="11rem"
+                        value={data?.createdAt.split('/').reverse().join('-')}
+                        type="date"
+                    />
+                    <Input
+                        isEditing={editable ? isEditing : true}
+                        label="Hora de início"
+                        w="11rem"
+                        type="time"
+                        value={data?.startTime}
+                        bold
+                    />
+                </Flex>
                 <Flex h="fit-content" align="center" hidden={!editable} gap="2rem">
                     <Input
                         display={data.editedAt.length === 0 ? 'none' : 'block'}
@@ -127,13 +141,12 @@ export default function PostModal({data, editable = false} : {data: IHistory, ed
                         lineHeight="1.25rem"
                         transition="all 0.1s ease-in-out"
                         px="1.5rem"
+                        onClick={() => document.getElementById("file")?.click()}
                         _hover={{
                             bg: '#52c8c2',
                         }}
                     >
-                        <label htmlFor="file" style={{cursor: "pointer",}}>
-                            {editable ? isEditing ? !data.image ? "Adicionar imagem" : "Alterar imagem" : "Ver imagem" : "Adicionar imagem"}
-                        </label>
+                        {editable ? isEditing ? !data.image ? "Adicionar imagem" : "Alterar imagem" : "Ver imagem" : "Adicionar imagem"}
                     </Button>
                     <Button
                         hidden={editable}

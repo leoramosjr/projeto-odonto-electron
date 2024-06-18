@@ -30,6 +30,7 @@ interface IHistory {
     description: string,
     createdAt: string,
     image?: string,
+    startTime: string,
     editedAt: string[],
 }
 
@@ -67,6 +68,8 @@ export default function ClientView(): JSX.Element {
                                     title: "",
                                     description: "",
                                     createdAt: "",
+                                    image: "",
+                                    startTime: "",
                                     editedAt: [],
                                 }
                             }
@@ -229,13 +232,7 @@ export default function ClientView(): JSX.Element {
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                {data?.history?.filter((item: IHistory) => {
-                                    const today = new Date();
-                                    const dateToFormat = new Date(item.createdAt.split('/').reverse().join('-')).setDate(new Date(item.createdAt.split('/').reverse().join('-')).getDate() + 1);
-                                    if (dateToFormat > today.getTime()) {
-                                        return null;
-                                    } else return item;
-                                }).map((item, index: number) => (
+                                {data?.history?.map((item, index: number) => (
                                     <Tr
                                         px="1rem"
                                         key={index}
@@ -246,6 +243,8 @@ export default function ClientView(): JSX.Element {
                                             setActivePost(item)
                                             onOpen3()
                                         }}
+                                        backgroundColor={index % 2 === 0 ? '#FFFFFF' : '#FAFAFA'}
+                                        borderBottom="1px solid #E2E8F0"
                                         cursor="pointer"
                                         _hover={{
                                             backgroundColor: '#F5F5F5'
@@ -254,8 +253,8 @@ export default function ClientView(): JSX.Element {
                                     >
                                         <Td px="0">{item.title ?? ''}</Td>
                                         <Flex w="30%" justify="space-between">
-                                            <Td px="0">{item.createdAt ?? ''}</Td>
-                                            <Td px="0">{item.editedAt[0] ?? ''}</Td>
+                                            <Td px="0" fontSize="1rem" fontWeight="600">{item.createdAt ?? ''}</Td>
+                                            <Td px="0" fontSize="1rem" fontWeight="600">{item.editedAt[0] ?? ''}</Td>
                                         </Flex>
                                     </Tr>
                                 ))}

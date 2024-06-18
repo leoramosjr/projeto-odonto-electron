@@ -184,7 +184,6 @@ export default function ClientInfos({
                     />
                 </Flex>
             </Flex>
-            
             <Flex direction="column" w="30%" gap="1.5rem" maxH={"22rem"}>
                 <Text
                     fontSize="1.5rem"
@@ -196,7 +195,7 @@ export default function ClientInfos({
                     Controle de Retornos
                 </Text>
                 <Text
-                    hidden={userData?.history?.length !== 0}
+                    hidden={userData?.nextEvents === null || userData?.nextEvents && (userData?.nextEvents?.length !== 0)}
                     fontSize="1rem"
                     fontWeight="500"
                     fontFamily="Dm Sans"
@@ -205,20 +204,14 @@ export default function ClientInfos({
                     Nenhum retorno agendado
                 </Text>
                 <TableContainer
-                    hidden={!userData?.history}
+                    hidden={!userData?.nextEvents}
                     w="100%"
                     overflowY="auto"
                     h="100%"
                 >
                     <Table size="sm">
                         <Tbody width="100%">
-                            {userData?.history.filter((item: IHistory) => {
-                                const today = new Date();
-                                const dateToFormat = new Date(item.createdAt.split('/').reverse().join('-')).setDate(new Date(item.createdAt.split('/').reverse().join('-')).getDate() + 1);
-                                if (dateToFormat < today.getTime()) {
-                                    return null;
-                                } else return item;
-                                }).map((item, index) => {
+                            {userData?.nextEvents?.map((item, index) => {
                                 return (
                                     <Tr
                                         display="flex"
@@ -227,31 +220,44 @@ export default function ClientInfos({
                                         justifyContent="space-between"
                                         backgroundColor={index % 2 === 0 ? '#FFFFFF' : '#FAFAFA'}
                                         border="none"
-                                        px="1rem"
+                                        borderBottom="1px solid #E2E8F0"
                                     >
-                                        <Flex>
-                                            <Td
-                                                py="0.6875rem"
-                                                fontSize="1rem"
-                                                fontWeight="700"
-                                                mr="0"
+                                        <Td
+                                            py="0.6875rem"
+                                            fontSize="1rem"
+                                            fontWeight="400"
+                                            gap="1rem"
+                                            borderBottom="none"
+                                        >
+                                            <Flex
+                                                align="center"
+                                                gap="0.5rem"
                                             >
-                                                {index + 1}.
-                                            </Td>
-                                            <Td
-                                                py="0.6875rem"
-                                                fontSize="1rem"
-                                                fontWeight="400"
-                                            >
+                                                <Text
+                                                    as="span"
+                                                    fontSize="1rem"
+                                                    fontWeight="700"
+                                                >
+                                                    {index + 1}-
+                                                </Text>
                                                 {item.title}
-                                            </Td>
-                                        </Flex>
+                                            </Flex>
+                                        </Td>
                                         <Td
                                             py="0.6875rem"
                                             fontSize="1rem"
                                             fontWeight="600"
+                                            borderBottom="none"
                                         >
-                                            {item.createdAt}
+                                            {item.date.split('/')[0] + '/' + item.date.split('/')[1]}
+                                        </Td>
+                                        <Td
+                                            py="0.6875rem"
+                                            fontSize="1rem"
+                                            fontWeight="600"
+                                            borderBottom="none"
+                                        >
+                                            {item.startTime}
                                         </Td>
                                     </Tr>
                                 );
