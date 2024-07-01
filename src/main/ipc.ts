@@ -41,6 +41,7 @@ ipcMain.handle(IPC.CLIENTS.CREATE, async (_, newClient: ClientsData): Promise<Cr
             origin: newClient.origin,
             firstQuery: new Intl.DateTimeFormat('pt-BR').format(new Date()),
             history: [],
+            nextEvents: []
         }
 
         console.log("client: ", client)
@@ -54,19 +55,23 @@ ipcMain.handle(IPC.CLIENTS.CREATE, async (_, newClient: ClientsData): Promise<Cr
 )
 
 ipcMain.handle(IPC.CLIENTS.SAVE,
-    async (_, { id, name, cpf, email, birthDate, phone, address, recurrence, job, origin }: EditClientRequest): Promise<void> => {
+    async (_, { id, name, cpf, email, birthDate, phone, address, recurrence, job, origin, firstQuery, nextEvents }: EditClientRequest): Promise<void> => {
         store.set(`clients.${id}`, {
-            name,
-            cpf,
-            email,
-            birthDate,
-            phone,
-            address,
-            recurrence,
-            job,
-            origin,
-        })
-    }
+			id,
+			cpf,
+			name,
+			email,
+			birthDate,
+			phone,
+			address,
+			recurrence,
+			job,
+			origin,
+			firstQuery,
+			history,
+			nextEvents,
+		},
+    )}
 )
 
 ipcMain.handle(IPC.CLIENTS.DELETE,

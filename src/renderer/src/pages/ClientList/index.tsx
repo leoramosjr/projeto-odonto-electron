@@ -18,7 +18,6 @@ import { useNavigate } from 'react-router-dom';
 import Provider from '../index';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { ClientsData } from '../../../../shared/types/ipc';
 
 export default function ClientList(): JSX.Element {
 

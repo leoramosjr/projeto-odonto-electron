@@ -1,7 +1,7 @@
 import {
     Flex,
     Text,
-    Button,
+    Button as ChakraButton,
     Table,
     TableContainer,
     Tbody,
@@ -17,13 +17,18 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 import { FiEdit, FiCheckSquare } from 'react-icons/fi';
+import { ClientsData, EditClientRequest } from '~/src/shared/types/ipc';
 import Provider from '../index.js';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import PostModal from '../../components/clients/PostModal';
 import EventModal from '../../components/EventModal';
-import ClientInfos from '../../components/clients/ClientInfos';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import Input from '../../components/base/Input';
+import { cpfMask } from '../../utils/cpfMask.js';
+import { phoneMask } from '../../utils/phoneMask.js';
+import Select from '../../components/base/Select.js';
+import { useMutation } from '@tanstack/react-query';
 
 interface IHistory {
     title: string,
@@ -51,8 +56,41 @@ export default function ClientView(): JSX.Element {
     const { isOpen: isOpen3, onOpen: onOpen3, onClose: onClose3} = useDisclosure();
     const [isEditing, setIsEditing] = useState(false)
     const [activePost, setActivePost] = useState<IHistory | null>(null)
+    const [editData, setEditData] = useState<ClientsData>(data!)
     
     document.title = `${data?.name} | • NR •`
+
+    const { isPending: isCreatingDocument, mutateAsync: editClient } =
+    useMutation({
+      mutationFn: async () => {
+        const newData = {
+            id: editData.id,
+            name: editData.name,
+            cpf: editData.cpf,
+            email: editData.email,
+            birthDate: editData.birthDate,
+            phone: editData.phone,
+            address: editData.address,
+            recurrence: editData.recurrence,
+            job: editData.job,
+            origin: editData.origin,
+            firstQuery: editData.firstQuery,
+            history: data?.history,
+            nextEvents: data?.nextEvents,
+        }
+        const response = await window.api.editClient(newData! as unknown as EditClientRequest);
+        console.log("response: ", response)
+      },
+      onSuccess: (data) => {
+        console.log("data: ", data)
+      },
+    });
+
+    useEffect(() => {
+        if (isEditing === false) {
+            editClient()
+        }
+    }, [isEditing])
 
     return (
         <Provider>
@@ -63,16 +101,14 @@ export default function ClientView(): JSX.Element {
                     <ModalCloseButton />
                     <ModalBody>
                         {data && <PostModal
-                            data={
-                                {
-                                    title: "",
-                                    description: "",
-                                    createdAt: "",
-                                    image: "",
-                                    startTime: "",
-                                    editedAt: [],
-                                }
-                            }
+                            data={{
+                                title: "",
+                                description: "",
+                                createdAt: "",
+                                image: "",
+                                startTime: "",
+                                editedAt: [],
+                            }}
                         />}
                     </ModalBody>
                 </ModalContent>
@@ -163,7 +199,7 @@ export default function ClientView(): JSX.Element {
                         </Flex>
                     </Flex>
                     <Flex gap="2rem">
-                        <Button
+                        <ChakraButton
                             bg="#43A29D"
                             color="white"
                             fontWeight="bold"
@@ -177,8 +213,8 @@ export default function ClientView(): JSX.Element {
                             onClick={onOpen2}
                         >
                             Criar Evento
-                        </Button>
-                        <Button
+                        </ChakraButton>
+                        <ChakraButton
                             bg="#054945"
                             color="white"
                             fontWeight="bold"
@@ -192,7 +228,7 @@ export default function ClientView(): JSX.Element {
                             onClick={onOpen}
                         >
                             Criar Postagem
-                        </Button>
+                        </ChakraButton>
                     </Flex>
                 </Flex>
                 <Flex
@@ -202,7 +238,241 @@ export default function ClientView(): JSX.Element {
                     gap="1.5rem"
                     direction="column"
                 >
-                    <ClientInfos isEditing={isEditing} userData={data!} />
+                    <Flex w="100%" gap="2rem">
+                        <Flex direction="column" w="70%" gap="1rem">
+                            <Text
+                                fontSize="1.5rem"
+                                fontWeight="700"
+                                fontFamily="Dm Sans"
+                                color="#1A202C"
+                                mb="0.5rem"
+                            >
+                                Informações do Paciente
+                            </Text>
+                            <Flex w="100%" gap="2rem">
+                                <Input
+                                    isEditing={isEditing}
+                                    bold
+                                    label="Data de Nascimento"
+                                    placeholder="04/10/1998"
+                                    value={editData?.birthDate}
+                                    onChange={(e) => {
+                                        setEditData({
+                                            ...editData,
+                                            birthDate: Intl.DateTimeFormat('en-US').format(new Date(e.target.value)),
+                                        });
+                                    }}
+                                />
+                                <Input
+                                    isEditing={isEditing}
+                                    bold
+                                    label="Telefone"
+                                    placeholder="+55 51 993043856"
+                                    value={editData?.phone}
+                                    onChange={(e) => {
+                                        if (e.target.value.length <= 15) setEditData({
+                                            ...editData,
+                                            phone: phoneMask(e.target.value),
+                                        });
+                                        else e.target.value = e.target.value.slice(0, 15)
+                                    }}
+                                />
+                            </Flex>
+                            <Flex w="100%" gap="2rem">
+                                <Input
+                                    isEditing={isEditing}
+                                    bold
+                                    label="Endereço de Email"
+                                    placeholder="victor.mondin@gmail.com"
+                                    value={editData?.email}
+                                    onChange={(e) => {
+                                        setEditData({
+                                            ...editData,
+                                            email: e.target.value,
+                                        });
+                                    }}
+                                />
+                                <Input
+                                    isEditing={isEditing}
+                                    bold
+                                    label="CPF"
+                                    placeholder="000.000.000-00"
+                                    value={editData?.cpf}
+                                    onChange={(e) => {
+                                        if (e.target.value.length <= 14) setEditData({
+                                            ...editData,
+                                            cpf: cpfMask(e.target.value),
+                                        });
+                                        else e.target.value = e.target.value.slice(0, 14)
+                                    }}
+                                />
+                            </Flex>
+                            <Flex w="100%" gap="2rem">
+                                <Input
+                                    isEditing={isEditing}
+                                    bold
+                                    label="Ocupação"
+                                    placeholder="Engenheiro de beleza"
+                                    value={editData?.job}
+                                    onChange={(e) => {
+                                        setEditData({
+                                            ...editData,
+                                            job: e.target.value,
+                                        });
+                                    }}
+                                />
+                                <Input
+                                    isEditing={isEditing}
+                                    bold
+                                    label="Endereço"
+                                    placeholder="Travbessa Tia Carmem, 123"
+                                    value={editData?.address}
+                                    onChange={(e) => {
+                                        setEditData({
+                                            ...editData,
+                                            address: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </Flex>
+                            <Flex w="100%" gap="2rem">
+                                <Select
+                                    isEditing={isEditing}
+                                    bold
+                                    label="Origem"
+                                    value={editData?.origin}
+                                    onChange={(e) => {
+                                        setEditData({
+                                            ...editData,
+                                            origin: e.target.value,
+                                        });
+                                    }}
+                                    optionsList={[
+                                        "Recomendação",
+                                        "Instagram",
+                                        "Google",
+                                        "Outros",
+                                    ]}
+                                />
+                                <Input
+                                    isEditing={isEditing}
+                                    bold
+                                    label="Primeira Consulta"
+                                    placeholder="23/09/2023"
+                                    value={editData?.firstQuery}
+                                    onChange={(e) => {
+                                        setEditData({
+                                            ...editData,
+                                            firstQuery: Intl.DateTimeFormat('en-US').format(new Date(e.target.value)),
+                                        });
+                                    }}
+                                />
+                            </Flex>
+                            <Flex w="calc(50% - 1rem)">
+                                <Select
+                                    isEditing={isEditing}
+                                    bold
+                                    label="Recorrência"
+                                    value={editData?.recurrence}
+                                    onChange={(e) => {
+                                        setEditData({
+                                            ...editData,
+                                            recurrence: e.target.value,
+                                        });
+                                    }}
+                                    optionsList={[
+                                        "Mensal",
+                                        "Bimestral",
+                                        "Trimestral",
+                                        "Semestral",
+                                        "Anual",
+                                    ]}
+                                />
+                            </Flex>
+                        </Flex>
+                        <Flex direction="column" w="30%" gap="1.5rem" maxH={"22rem"}>
+                            <Text
+                                fontSize="1.5rem"
+                                fontWeight="700"
+                                fontFamily="Dm Sans"
+                                color="#1A202C"
+                                mb="0.5rem"
+                            >
+                                Controle de Retornos
+                            </Text>
+                            <Text
+                                hidden={data?.nextEvents === null || data?.nextEvents && (data?.nextEvents?.length !== 0)}
+                                fontSize="1rem"
+                                fontWeight="500"
+                                fontFamily="Dm Sans"
+                                color="#1A202C"
+                            >
+                                Nenhum retorno agendado
+                            </Text>
+                            <TableContainer
+                                hidden={!data?.nextEvents}
+                                w="100%"
+                                overflowY="auto"
+                                h="100%"
+                            >
+                                <Table size="sm">
+                                    <Tbody width="100%">
+                                        {data?.nextEvents?.map((item, index) => {
+                                            return (
+                                                <Tr
+                                                    display="flex"
+                                                    w="100%"
+                                                    key={index}
+                                                    justifyContent="space-between"
+                                                    backgroundColor={index % 2 === 0 ? '#FFFFFF' : '#FAFAFA'}
+                                                    border="none"
+                                                    borderBottom="1px solid #E2E8F0"
+                                                >
+                                                    <Td
+                                                        py="0.6875rem"
+                                                        fontSize="1rem"
+                                                        fontWeight="400"
+                                                        gap="1rem"
+                                                        borderBottom="none"
+                                                    >
+                                                        <Flex
+                                                            align="center"
+                                                            gap="0.5rem"
+                                                        >
+                                                            <Text
+                                                                as="span"
+                                                                fontSize="1rem"
+                                                                fontWeight="700"
+                                                            >
+                                                                {index + 1}-
+                                                            </Text>
+                                                            {item.title}
+                                                        </Flex>
+                                                    </Td>
+                                                    <Td
+                                                        py="0.6875rem"
+                                                        fontSize="1rem"
+                                                        fontWeight="600"
+                                                        borderBottom="none"
+                                                    >
+                                                        {item.date.split('/')[0] + '/' + item.date.split('/')[1]}
+                                                    </Td>
+                                                    <Td
+                                                        py="0.6875rem"
+                                                        fontSize="1rem"
+                                                        fontWeight="600"
+                                                        borderBottom="none"
+                                                    >
+                                                        {item.startTime}
+                                                    </Td>
+                                                </Tr>
+                                            );
+                                        })}
+                                    </Tbody>
+                                </Table>
+                            </TableContainer>
+                        </Flex>
+                    </Flex>
                     <Text
                         fontSize="1.5rem"
                         fontWeight="700"
@@ -223,11 +493,17 @@ export default function ClientView(): JSX.Element {
                     <TableContainer w="100%" hidden={data?.history.length === 0}>
                         <Table>
                             <Thead>
-                                <Tr w="100%" display="flex" justifyContent={"space-between"} px="1rem">
-                                    <Td px="0" fontWeight="bold">Postagem</Td>
+                                <Tr
+                                    w="100%"
+                                    display="flex"
+                                    justifyContent={"space-between"}
+                                    px="1rem"
+                                    borderBottom="1px solid #E2E8F0"
+                                >
+                                    <Td px="0" fontWeight="bold" border="none">Postagem</Td>
                                     <Flex w="30%" justify="space-between">
-                                        <Td px="0" fontWeight="bold">Data de Criação</Td>
-                                        <Td px="0" fontWeight="bold">Última Edição</Td>
+                                        <Td px="0" fontWeight="bold" border="none">Data de Criação</Td>
+                                        <Td px="0" fontWeight="bold" border="none">Última Edição</Td>
                                     </Flex>
                                 </Tr>
                             </Thead>
