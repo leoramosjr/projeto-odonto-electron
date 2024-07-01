@@ -32,7 +32,7 @@ ipcMain.handle(IPC.CLIENTS.CREATE, async (_, newClient: ClientsData): Promise<Cr
             cpf: newClient.cpf,
             name: newClient.name,
             email: newClient.email,
-            birthDate: new Intl.DateTimeFormat('pt-BR').format(new Date(newClient.birthDate)),
+            birthDate: new Intl.DateTimeFormat('pt-BR').format(new Date(newClient.birthDate).setDate(new Date(newClient.birthDate).getDate() + 1)),
             phone: newClient.phone,
             address: newClient.address,
             recurrence: newClient.recurrence,

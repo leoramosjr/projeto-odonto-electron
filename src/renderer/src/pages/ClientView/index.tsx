@@ -17,7 +17,7 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 import { FiEdit, FiCheckSquare } from 'react-icons/fi';
-import { ClientsData, EditClientRequest } from '~/src/shared/types/ipc';
+import { ClientsData, EditClientRequest } from '../../../../shared/types/ipc';
 import Provider from '../index.js';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
