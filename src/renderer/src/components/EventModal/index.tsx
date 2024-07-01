@@ -18,6 +18,7 @@ export default function EventModal({
     const { data } = useQuery({
         queryKey: ['clients'],
         queryFn: async () => {
+            //@ts-ignore
             const response = await window.api.fetchClientList();
             return response.data;
         },

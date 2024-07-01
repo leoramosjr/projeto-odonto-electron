@@ -26,10 +26,11 @@ export default function NewClient({
     const queryClient = useQueryClient()
     const toast = useToast()
     
-    const { isPending: isCreatingDocument, mutateAsync: createNewClient } =
+    const { mutateAsync: createNewClient } =
     useMutation({
       mutationFn: async () => {
         console.log("newClientData: ", newClientData)
+        //@ts-ignore
         const response = await window.api.createClient(newClientData! as unknown as CreateClientRequest);
         console.log("response: ", response)
         return response.data;

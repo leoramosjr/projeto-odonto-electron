@@ -46,6 +46,7 @@ export default function ClientView(): JSX.Element {
     const { data } = useQuery({
         queryKey: ['clients', userId.id],
         queryFn: async () => {
+            //@ts-ignore
             const response = await window.api.fetchClient({id: userId.id!});
             return response.data;
         },
@@ -60,7 +61,7 @@ export default function ClientView(): JSX.Element {
     
     document.title = `${data?.name} | • NR •`
 
-    const { isPending: isCreatingDocument, mutateAsync: editClient } =
+    const { mutateAsync: editClient } =
     useMutation({
       mutationFn: async () => {
         const newData = {
@@ -78,6 +79,7 @@ export default function ClientView(): JSX.Element {
             history: data?.history,
             nextEvents: data?.nextEvents,
         }
+        //@ts-ignore
         const response = await window.api.editClient(newData! as unknown as EditClientRequest);
         console.log("response: ", response)
       },
@@ -91,6 +93,10 @@ export default function ClientView(): JSX.Element {
             editClient()
         }
     }, [isEditing])
+
+    useEffect(() => {
+        setEditData(data!)
+    }, [data])
 
     return (
         <Provider>

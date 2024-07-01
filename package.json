@@ -1,7 +1,7 @@
 {
   "name": "sistema-ortodontistico",
   "productName": "Sistema Ortodontistico",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
   "author": "example.com",
@@ -18,7 +18,8 @@
     "postinstall": "electron-builder install-app-deps",
     "build:win": "npm run build && electron-builder --win --config",
     "build:mac": "electron-vite build && electron-builder --mac --config",
-    "build:linux": "electron-vite build && electron-builder --linux --config"
+    "build:linux": "electron-vite build && electron-builder --linux --config",
+    "release": "electron-builder --publish always"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.2",
