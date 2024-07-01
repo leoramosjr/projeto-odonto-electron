@@ -10,8 +10,8 @@ import {
 import Input from "../../base/Input";
 import Select from "../../base/Select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ClientsData, CreateClientRequest } from "~/src/shared/types/ipc";
-import { useEffect, useState } from "react";
+import { ClientsData } from "../../../../../shared/types/ipc";
+import { useState } from "react";
 import { cpfMask } from "../../../utils/cpfMask";
 import { phoneMask } from "../../../utils/phoneMask";
 
@@ -22,7 +22,7 @@ export default function NewClient({
 }): JSX.Element {
 
     const [recurrence, setRecurrence] = useState<string>("")
-    const [newClientData, setNewClientData] = useState<ClientsData>()
+    const [newClientData, setNewClientData] = useState<any>()
     const queryClient = useQueryClient()
     const toast = useToast()
     
@@ -30,8 +30,8 @@ export default function NewClient({
     useMutation({
       mutationFn: async () => {
         console.log("newClientData: ", newClientData)
-        //@ts-ignore
-        const response = await window.api.createClient(newClientData! as unknown as CreateClientRequest);
+        // @ts-ignore
+        const response = await window.api.createClient(newClientData);
         console.log("response: ", response)
         return response.data;
       },
@@ -60,8 +60,8 @@ export default function NewClient({
                 const data = Object.fromEntries(formData.entries())
                 const newClient = {
                     id: "",
-                    cpf: data.cpf.toString(),
                     name: data.nome.toString(),
+                    cpf: data.cpf.toString(),
                     email: data.email.toString(),
                     birthDate: data.birthday.toString(),
                     phone: data.cellphone.toString(),
@@ -102,6 +102,7 @@ export default function NewClient({
                         isClosable: true,
                     })
                     onClose()
+                    return
                 }).catch((error) => {
                     toast({
                         title: "Erro ao criar novo paciente",
@@ -110,7 +111,9 @@ export default function NewClient({
                         duration: 9000,
                         isClosable: true,
                     })
+                    return
                 })
+                return
             }}
         >
             <Input
