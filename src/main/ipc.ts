@@ -1,5 +1,4 @@
 import { ipcMain } from "electron";
-import { randomUUID } from 'node:crypto'
 import { IPC } from "../shared/constants/ipc";
 import { ClientsData, CreateClientResponse, DeleteClientRequest, EditClientRequest, FetchAllClientsResponse, FetchClientRequest, FetchClientResponse } from "../shared/types/ipc";
 import { store } from "./store";
