@@ -1,4 +1,4 @@
-appId: com.electron.app
+appId: creatusdev.com
 productName: Sistema Ortodontistico
 directories:
   buildResources: build
@@ -10,7 +10,6 @@ files:
   - '!{tsconfig.json}'
 asarUnpack:
   - '**/*.{node,dll}'
-afterSign: build/notarize.js
 win:
   executableName: Sistema Ortodontistico
 nsis:
@@ -30,13 +29,12 @@ dmg:
 linux:
   target:
     - AppImage
-    - snap
     - deb
-  maintainer: electronjs.org
+    - rpm
+    - pacman
+    - freebsd
+  maintainer: creatusdev.com
   category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
-publish:
-  provider: generic
-  url: https://example.com/auto-updates
