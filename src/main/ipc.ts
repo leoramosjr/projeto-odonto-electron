@@ -1,7 +1,13 @@
 import { ipcMain } from "electron";
-import { randomUUID } from 'node:crypto'
 import { IPC } from "../shared/constants/ipc";
-import { ClientsData, CreateClientResponse, DeleteClientRequest, EditClientRequest, FetchAllClientsResponse, FetchClientRequest, FetchClientResponse } from "../shared/types/ipc";
+import {
+    ClientsData,
+    CreateClientResponse,
+    EditClientRequest,
+    FetchAllClientsResponse,
+    FetchClientRequest,
+    FetchClientResponse
+} from "../shared/types/ipc";
 import { store } from "./store";
 
 ipcMain.handle(IPC.CLIENTS.FETCH_ALL,
@@ -11,9 +17,9 @@ ipcMain.handle(IPC.CLIENTS.FETCH_ALL,
     }
 })
 
-ipcMain.handle(IPC.CLIENTS.FETCH, async (_, { id }: FetchClientRequest): Promise<FetchClientResponse> => {
+ipcMain.handle(
+    IPC.CLIENTS.FETCH, async (_, { id }: FetchClientRequest): Promise<FetchClientResponse> => {
     const client = store.get(`clients.${id}`) as ClientsData
-
     return { data: client }
 })
 
@@ -43,9 +49,6 @@ ipcMain.handle(IPC.CLIENTS.CREATE, async (_, newClient: ClientsData): Promise<Cr
             history: [],
             nextEvents: []
         }
-
-        console.log("client: ", client)
-
         store.set(`clients.${client.id}`, client)
 
         return {
@@ -72,11 +75,4 @@ ipcMain.handle(IPC.CLIENTS.SAVE,
 			nextEvents,
 		},
     )}
-)
-
-ipcMain.handle(IPC.CLIENTS.DELETE,
-    async (_, { id }: DeleteClientRequest): Promise<void> => {
-        //@ts-ignore
-        store.delete(`clients.${id}`)
-    }
 )

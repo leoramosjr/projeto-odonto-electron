@@ -26,18 +26,17 @@ export interface ClientsData {
     }[],
 }
 
-//REquests
+//Requests
 
 export interface FetchClientRequest {
     id: string
 }
 
-export interface EditClientRequest extends ClientsData {
+export interface CreateClientRequest {
+    data: ClientsData
 }
 
-export interface DeleteClientRequest {
-    id: string
-}
+export type EditClientRequest = ClientsData
 
 //Responses
 
@@ -46,10 +45,6 @@ export interface FetchAllClientsResponse {
 }
 
 export interface FetchClientResponse {
-    data: ClientsData
-}
-
-export interface CreateClientRequest {
     data: ClientsData
 }
 

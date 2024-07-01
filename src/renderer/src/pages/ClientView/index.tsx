@@ -60,7 +60,7 @@ export default function ClientView(): JSX.Element {
     
     document.title = `${data?.name} | • NR •`
 
-    const { isPending: isCreatingDocument, mutateAsync: editClient } =
+    const { mutateAsync: editClient } =
     useMutation({
       mutationFn: async () => {
         const newData = {

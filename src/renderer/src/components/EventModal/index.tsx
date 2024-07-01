@@ -5,7 +5,7 @@ import {
 import Input from '../base/Input'
 import Select from '../base/Select'
 import { useQuery } from '@tanstack/react-query';
-import { ClientsData } from '~/src/shared/types/ipc';
+import { ClientsData } from '../../../../shared/types/ipc'
 
 export default function EventModal({
     selectable = false,
@@ -18,6 +18,7 @@ export default function EventModal({
     const { data } = useQuery({
         queryKey: ['clients'],
         queryFn: async () => {
+            // @ts-ignore
             const response = await window.api.fetchClientList();
             return response.data;
         },
