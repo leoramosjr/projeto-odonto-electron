@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
-import react from '@vitejs/plugin-react'
 import tsconfigPathsPlugin from 'vite-tsconfig-paths'
+import react from '@vitejs/plugin-react'
 
 const tsconfigPaths = tsconfigPathsPlugin({
   projects: [path.resolve('tsconfig.json')],
@@ -17,6 +17,9 @@ export default defineConfig({
     plugins: [tsconfigPaths, externalizeDepsPlugin()],
   },
   renderer: {
+    define: {
+      'process.platform': JSON.stringify(process.platform),
+    },
     css: {
       postcss: {
         plugins: [
