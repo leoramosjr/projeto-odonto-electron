@@ -11,7 +11,7 @@ declare global {
 }
 
 // Custom APIs for renderer
-const api = {
+export const api = {
   fetchClientList(): Promise<FetchAllClientsResponse> {
     return ipcRenderer.invoke(IPC.CLIENTS.FETCH_ALL)
   },
